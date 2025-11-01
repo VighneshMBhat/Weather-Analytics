@@ -1,0 +1,24 @@
+{
+  "name": "weather-analytics-dashboard",
+  "version": "1.0.0",
+  "description": "Weather Analytics Dashboard with React and Node.js",
+  "private": true,
+  "scripts": {
+    "install:all": "npm run install:backend && npm run install:frontend",
+    "install:backend": "cd backend && npm install",
+    "install:frontend": "cd frontend && npm install",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm start",
+    "start:backend": "cd backend && npm start",
+    "build:frontend": "cd frontend && npm run build"
+  },
+  "keywords": [
+    "weather",
+    "dashboard",
+    "react",
+    "nodejs",
+    "supabase"
+  ],
+  "author": "",
+  "license": "MIT"
+}
