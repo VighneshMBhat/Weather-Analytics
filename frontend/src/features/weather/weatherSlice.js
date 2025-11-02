@@ -21,8 +21,8 @@ export const fetchCurrentWeather = createAsyncThunk(
   'weather/fetchCurrent',
   async (city, thunkAPI) => {
     try {
-      const response = await getCurrentWeather(city);
-      return { city, data: response.data };
+      const data = await getCurrentWeather(city);
+      return { city, data };
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data?.error || error.message);
     }
@@ -34,8 +34,8 @@ export const fetchCurrentWeather = createAsyncThunk(
  */
 export const fetchForecast = createAsyncThunk('weather/fetchForecast', async (city, thunkAPI) => {
   try {
-    const response = await getForecast(city);
-    return { city, data: response.data };
+    const data = await getForecast(city);
+    return { city, data };
   } catch (error) {
     return thunkAPI.rejectWithValue(error.response?.data?.error || error.message);
   }
@@ -48,15 +48,15 @@ export const fetchAllWeatherData = createAsyncThunk(
   'weather/fetchAll',
   async (city, thunkAPI) => {
     try {
-      const [currentResponse, forecastResponse] = await Promise.all([
+      const [currentData, forecastData] = await Promise.all([
         getCurrentWeather(city),
         getForecast(city),
       ]);
 
       return {
         city,
-        current: currentResponse.data,
-        forecast: forecastResponse.data,
+        current: currentData,
+        forecast: forecastData,
       };
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data?.error || error.message);
@@ -90,7 +90,8 @@ const weatherSlice = createSlice({
         const cityKey = normalizeCityKey(action.payload.city);
         state.byCity[cityKey] = {
           ...state.byCity[cityKey],
-          current: action.payload.data,
+          // Backend returns {cityName, current: {...}}, extract the nested current object
+          current: action.payload.data.current || action.payload.data,
           lastFetched: Date.now(),
           status: 'succeeded',
           error: null,
@@ -115,7 +116,8 @@ const weatherSlice = createSlice({
         const cityKey = normalizeCityKey(action.payload.city);
         state.byCity[cityKey] = {
           ...state.byCity[cityKey],
-          forecast: action.payload.data,
+          // Backend returns {forecast: {daily, hourly}}, extract the nested forecast object
+          forecast: action.payload.data.forecast || action.payload.data,
           lastFetched: Date.now(),
           status: 'succeeded',
           error: null,
@@ -139,8 +141,10 @@ const weatherSlice = createSlice({
       .addCase(fetchAllWeatherData.fulfilled, (state, action) => {
         const cityKey = normalizeCityKey(action.payload.city);
         state.byCity[cityKey] = {
-          current: action.payload.current,
-          forecast: action.payload.forecast,
+          // Backend returns {cityName, current: {...}}, extract the nested current object
+          current: action.payload.current.current || action.payload.current,
+          // Backend returns {forecast: {daily, hourly}}, extract the nested forecast object
+          forecast: action.payload.forecast.forecast || action.payload.forecast,
           lastFetched: Date.now(),
           status: 'succeeded',
           error: null,

@@ -1,13 +1,36 @@
 const axios = require('axios');
 const { saveHistoricalSnapshot } = require('./supabaseService');
+const openMeteoService = require('./openMeteoService');
 
 const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
-const WEATHER_API_PROVIDER = process.env.WEATHER_API_PROVIDER || 'weatherapi';
+const WEATHER_API_PROVIDER = process.env.WEATHER_API_PROVIDER || 'openmeteo'; // Default to free Open-Meteo
 const WEATHERAPI_BASE_URL = 'https://api.weatherapi.com/v1';
+
+// Verify configuration based on provider
+console.log('\n' + '='.repeat(60));
+console.log('🌤️  Weather Service Configuration');
+console.log('='.repeat(60));
+console.log('✅ Weather API Provider:', WEATHER_API_PROVIDER);
+
+if (WEATHER_API_PROVIDER === 'weatherapi') {
+  if (!WEATHER_API_KEY) {
+    console.error('⚠️  WEATHER_API_KEY is not set for WeatherAPI.com!');
+    console.error('Please add WEATHER_API_KEY to backend/.env file');
+  } else {
+    console.log('✅ Weather API Key loaded:', WEATHER_API_KEY.substring(0, 8) + '...');
+    console.log('✅ Weather API Base URL:', WEATHERAPI_BASE_URL);
+  }
+} else if (WEATHER_API_PROVIDER === 'openmeteo') {
+  console.log('✅ Using Open-Meteo (Free, no API key required)');
+  console.log('✅ Open-Meteo Base URL: https://api.open-meteo.com/v1');
+}
+console.log('='.repeat(60) + '\n');
 
 /**
  * Weather service to fetch data from external weather API
- * Supports WeatherAPI.com (default)
+ * Supports multiple providers:
+ * - Open-Meteo (free, no API key) - DEFAULT
+ * - WeatherAPI.com (requires API key)
  * API Key is kept secure on backend - never exposed to frontend
  */
 
@@ -254,6 +277,8 @@ async function fetchCurrentWeather(locationInput) {
 
   if (WEATHER_API_PROVIDER === 'weatherapi') {
     weatherData = await fetchCurrentWeatherAPI(city);
+  } else if (WEATHER_API_PROVIDER === 'openmeteo') {
+    weatherData = await openMeteoService.fetchCurrentWeather(city);
   } else {
     throw new Error(`Provider ${WEATHER_API_PROVIDER} not supported`);
   }
@@ -278,6 +303,8 @@ async function fetchForecast(locationInput, days = 3) {
 
   if (WEATHER_API_PROVIDER === 'weatherapi') {
     return await fetchForecastWeatherAPI(city, Math.min(days, 14)); // Max 14 days
+  } else if (WEATHER_API_PROVIDER === 'openmeteo') {
+    return await openMeteoService.fetchForecast(city, Math.min(days, 16)); // Max 16 days for Open-Meteo
   } else {
     throw new Error(`Provider ${WEATHER_API_PROVIDER} not supported`);
   }
@@ -350,6 +377,8 @@ async function searchCities(query, limit = 5) {
         ? `${city.name}, ${city.region}, ${city.country}`
         : `${city.name}, ${city.country}`,
     }));
+  } else if (WEATHER_API_PROVIDER === 'openmeteo') {
+    return await openMeteoService.searchCities(query, limit);
   }
 
   throw new Error(`Provider ${WEATHER_API_PROVIDER} not supported`);

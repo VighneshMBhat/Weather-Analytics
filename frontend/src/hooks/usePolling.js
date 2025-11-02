@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react';
+import React, { useEffect, useRef, useCallback, useState } from 'react';
 
 /**
  * Custom hook for polling with interval
@@ -68,7 +68,7 @@ export function usePolling(fn, interval = 60000, enabled = true) {
  * @param {number} delay - Delay in milliseconds (default: 500ms)
  */
 export function useDebounce(value, delay = 500) {
-  const [debouncedValue, setDebouncedValue] = React.useState(value);
+  const [debouncedValue, setDebouncedValue] = useState(value);
 
   useEffect(() => {
     const handler = setTimeout(() => {

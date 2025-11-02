@@ -80,17 +80,45 @@ app.use((err, req, res, _next) => {
 
 // Start server
 app.listen(PORT, () => {
+  console.log('\n' + '='.repeat(60));
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📍 Environment: ${NODE_ENV}`);
   console.log(`🌐 API endpoint: http://localhost:${PORT}`);
   console.log(`📊 Health check: http://localhost:${PORT}/health`);
+  console.log('='.repeat(60));
   
-  if (!process.env.WEATHER_API_KEY) {
-    console.warn('⚠️  WEATHER_API_KEY not set in .env file');
+  console.log('\n📋 Environment Variables Check:');
+  console.log('✅ PORT:', PORT);
+  console.log('✅ NODE_ENV:', NODE_ENV);
+  
+  const provider = process.env.WEATHER_API_PROVIDER || 'openmeteo';
+  
+  // Only check for API key if using weatherapi provider
+  if (provider === 'weatherapi') {
+    if (process.env.WEATHER_API_KEY) {
+      console.log('✅ WEATHER_API_KEY:', process.env.WEATHER_API_KEY.substring(0, 8) + '...' + process.env.WEATHER_API_KEY.substring(process.env.WEATHER_API_KEY.length - 4));
+    } else {
+      console.error('❌ WEATHER_API_KEY not set in .env file (required for WeatherAPI.com)!');
+    }
+  } else if (provider === 'openmeteo') {
+    console.log('✅ Using Open-Meteo: No API key needed!');
   }
-  if (!process.env.SUPABASE_URL) {
-    console.warn('⚠️  SUPABASE_URL not set in .env file');
+  
+  if (process.env.SUPABASE_URL) {
+    console.log('✅ SUPABASE_URL:', process.env.SUPABASE_URL);
+  } else {
+    console.error('❌ SUPABASE_URL not set in .env file!');
   }
+  
+  if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    console.log('✅ SUPABASE_SERVICE_ROLE_KEY: Set (' + process.env.SUPABASE_SERVICE_ROLE_KEY.length + ' chars)');
+  } else {
+    console.error('❌ SUPABASE_SERVICE_ROLE_KEY not set in .env file!');
+  }
+  
+  console.log('\n' + '='.repeat(60));
+  console.log('🧪 Test weather API: curl "http://localhost:' + PORT + '/api/weather/current?city=London"');
+  console.log('='.repeat(60) + '\n');
 });
 
 // Graceful shutdown

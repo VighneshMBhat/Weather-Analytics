@@ -13,13 +13,14 @@ const apiLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-// Stricter limit for weather API calls (external API has limits)
+// Weather API rate limit (relaxed for development, cache helps reduce actual API calls)
 const weatherLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
-  max: 30, // Limit each IP to 30 requests per minute
+  max: 200, // Limit each IP to 200 requests per minute (cache reduces actual API calls)
   message: 'Too many weather requests, please slow down.',
   standardHeaders: true,
   legacyHeaders: false,
+  skipSuccessfulRequests: false, // Count all requests
 });
 
 // Authentication endpoints rate limit

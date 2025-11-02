@@ -230,8 +230,8 @@ const CityDetail = () => {
                 <TempChart
                   data={forecast.daily.map((d) => ({
                     dt: d.dt,
-                    temp: d.temp.day,
-                    feels_like: d.feels_like.day,
+                    temp: d.temp?.day || d.temp?.max || 0,
+                    feels_like: d.temp?.day || d.temp?.max || 0,
                   }))}
                   title="7-Day Temperature Forecast"
                 />

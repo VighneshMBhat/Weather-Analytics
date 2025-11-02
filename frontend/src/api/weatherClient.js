@@ -10,10 +10,13 @@ const weatherAPI = axios.create({
 
 /**
  * Get temperature unit from Redux store
+ * Converts 'metric'/'imperial' to 'celsius'/'fahrenheit' for backend
  */
 const getUnit = () => {
   const state = store.getState();
-  return state.settings?.unit || 'celsius';
+  const unit = state.settings?.unit || 'metric';
+  // Backend expects 'celsius' or 'fahrenheit', but frontend uses 'metric' or 'imperial'
+  return unit === 'imperial' ? 'fahrenheit' : 'celsius';
 };
 
 /**
@@ -21,13 +24,21 @@ const getUnit = () => {
  * Temperature unit is automatically added from settings
  */
 export const getCurrentWeather = async (city) => {
-  const response = await weatherAPI.get('/weather/current', {
-    params: { 
-      city,
-      unit: getUnit(),
-    },
-  });
-  return response.data;
+  try {
+    const response = await weatherAPI.get('/weather/current', {
+      params: { 
+        city,
+        unit: getUnit(),
+      },
+    });
+    // Backend returns { success: true, data: {...} }, extract the data
+    const data = response.data.data || response.data;
+    console.log('✅ getCurrentWeather response for', city, ':', data);
+    return data;
+  } catch (error) {
+    console.error('❌ getCurrentWeather error for', city, ':', error.response?.data || error.message);
+    throw error;
+  }
 };
 
 /**
@@ -42,7 +53,8 @@ export const getForecast = async (city, days = 7) => {
       unit: getUnit(),
     },
   });
-  return response.data;
+  // Backend returns { success: true, data: {...} }, extract the data
+  return response.data.data || response.data;
 };
 
 /**
@@ -57,7 +69,8 @@ export const getHourly = async (city, hours = 24) => {
       unit: getUnit(),
     },
   });
-  return response.data;
+  // Backend returns { success: true, data: {...} }, extract the data
+  return response.data.data || response.data;
 };
 
 /**
@@ -73,7 +86,8 @@ export const getHistorical = async (city, date) => {
       unit: getUnit(),
     },
   });
-  return response.data;
+  // Backend returns { success: true, data: {...} }, extract the data
+  return response.data.data || response.data;
 };
 
 /**
@@ -89,7 +103,8 @@ export const getFuture = async (city, date) => {
       unit: getUnit(),
     },
   });
-  return response.data;
+  // Backend returns { success: true, data: {...} }, extract the data
+  return response.data.data || response.data;
 };
 
 /**
@@ -99,7 +114,8 @@ export const getSupabaseHistorical = async (city, from, to) => {
   const response = await weatherAPI.get('/weather/supabase-historical', {
     params: { city, from, to },
   });
-  return response.data;
+  // Backend returns { success: true, data: {...} }, extract the data
+  return response.data.data || response.data;
 };
 
 /**
@@ -109,7 +125,8 @@ export const searchCities = async (query, limit = 5) => {
   const response = await weatherAPI.get('/weather/search', {
     params: { q: query, limit },
   });
-  return response.data;
+  // Backend returns { success: true, data: {...} }, extract the data
+  return response.data.data || response.data;
 };
 
 /**

@@ -20,9 +20,9 @@ const weatherCache = new CacheManager(60);
  * Temperature conversion handled on backend
  */
 router.get('/current', async (req, res) => {
+  const { city, unit = 'celsius' } = req.query;
+  
   try {
-    const { city, unit = 'celsius' } = req.query;
-
     if (!city) {
       return res.status(400).json({ error: 'City parameter is required' });
     }
@@ -43,10 +43,12 @@ router.get('/current', async (req, res) => {
       cacheStats: weatherCache.getStats(),
     });
   } catch (error) {
-    console.error('Error fetching current weather:', error.message);
+    console.error('❌ Error fetching current weather for:', city || 'unknown');
+    console.error('Error details:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: error.message || 'Failed to fetch weather data',
+      details: process.env.NODE_ENV === 'development' ? error.response?.data : undefined,
     });
   }
 });

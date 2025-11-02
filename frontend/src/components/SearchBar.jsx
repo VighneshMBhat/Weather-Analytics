@@ -21,8 +21,9 @@ const SearchBar = () => {
     const timeoutId = setTimeout(async () => {
       setIsLoading(true);
       try {
-        const response = await searchCities(query);
-        setResults(response.data || []);
+        const data = await searchCities(query);
+        console.log('Search results:', data); // Debug log
+        setResults(Array.isArray(data) ? data : []);
         setShowResults(true);
       } catch (error) {
         console.error('Search error:', error);
