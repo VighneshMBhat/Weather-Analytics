@@ -5,15 +5,36 @@ A production-ready Weather Analytics Dashboard with real-time updates, interacti
 ## Features ✨
 
 - **Real-time Weather Data**: Updates every 60 seconds with current conditions
+- **Free Weather API**: Uses Open-Meteo (no API key required!)
 - **Interactive Charts**: Temperature, precipitation, and wind speed visualizations using Recharts
 - **Favorites Management**: Save favorite cities (synced to Supabase when authenticated)
 - **Google Sign-In**: Authentication powered by Supabase Auth
 - **Responsive Design**: Beautiful UI with Tailwind CSS and Framer Motion animations
+- **Dark/Light Mode**: System-aware theme switching
 - **Smart Caching**: Backend caching with 60s TTL to reduce API calls
 - **Rate Limiting**: Protection against API abuse
 - **Unit Toggle**: Switch between Celsius/Fahrenheit instantly
 - **CSV Export**: Download weather data for analysis
 - **City Search**: Autocomplete search with geocoding
+
+## Why Open-Meteo? 🌍
+
+This project uses **Open-Meteo** as the weather data provider instead of commercial APIs like OpenWeatherMap. Here's why:
+
+✅ **Completely Free** - No API key required, no credit card, no sign-up  
+✅ **No Rate Limits** - Unlimited requests on the free tier  
+✅ **High Quality Data** - Weather data from national weather services (NOAA, DWD, etc.)  
+✅ **Global Coverage** - 11 km resolution worldwide, 1 km for Europe  
+✅ **Open Source** - Built for the open-source community  
+✅ **No Vendor Lock-in** - Easy to get started without registration  
+
+**Perfect for:**
+- Learning projects
+- Hackathons
+- MVPs and prototypes
+- Production apps with reasonable traffic
+
+Learn more: [https://open-meteo.com](https://open-meteo.com)
 
 ## Tech Stack 🛠️
 
@@ -31,7 +52,7 @@ A production-ready Weather Analytics Dashboard with real-time updates, interacti
 - In-memory caching (node-cache) with request coalescing
 - Rate limiting (express-rate-limit)
 - Supabase integration for storage
-- OpenWeatherMap API integration
+- Open-Meteo API integration (free, no API key required)
 
 ## Project Structure 📁
 
@@ -90,8 +111,8 @@ weather-project/
 ### Prerequisites
 
 - Node.js 18+ installed
-- OpenWeatherMap API key (free tier: https://openweathermap.org/api)
 - Supabase account (free tier: https://supabase.com)
+- No weather API key needed! (using Open-Meteo free tier)
 
 ### 1. Clone the Repository
 
@@ -117,17 +138,17 @@ Edit `.env` and add your credentials:
 ```env
 NODE_ENV=development
 PORT=4000
-WEATHER_API_KEY=your_openweathermap_api_key_here
-WEATHER_API_PROVIDER=openweathermap
+WEATHER_API_PROVIDER=openmeteo
+OPEN_METEO_BASE_URL=https://api.open-meteo.com/v1
 SUPABASE_URL=your_supabase_project_url_here
 SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key_here
-JWT_SECRET=your_random_secret_here
 ```
 
-**⚠️ Important:** Get your OpenWeatherMap API key from https://openweathermap.org/api
-- Sign up for a free account
-- Get your API key from the dashboard
-- Note: You need the "One Call API 3.0" subscription (free tier available)
+**✨ Note:** Open-Meteo is completely free and requires NO API key!
+- Uses Open-Meteo API: https://open-meteo.com
+- No sign-up required
+- No rate limits on free tier
+- High-quality weather data from national weather services
 
 Start the backend:
 
@@ -153,8 +174,7 @@ cp .env.example .env
 Edit `.env` and add your credentials:
 
 ```env
-REACT_APP_WEATHER_API_PROVIDER=openweathermap
-REACT_APP_WEATHER_API_KEY=your_openweathermap_api_key_here
+REACT_APP_WEATHER_API_PROVIDER=openmeteo
 REACT_APP_SUPABASE_URL=your_supabase_project_url_here
 REACT_APP_SUPABASE_ANON_KEY=your_supabase_anon_key_here
 REACT_APP_NODE_API_BASE=http://localhost:4000/api
@@ -294,17 +314,18 @@ Frontend will run on http://localhost:3000
 ### Environment Variables Checklist
 
 **Backend:**
-- ✅ WEATHER_API_KEY
+- ✅ WEATHER_API_PROVIDER=openmeteo
+- ✅ OPEN_METEO_BASE_URL=https://api.open-meteo.com/v1
 - ✅ SUPABASE_URL
 - ✅ SUPABASE_SERVICE_ROLE_KEY
 - ✅ NODE_ENV=production
 - ✅ PORT
 
 **Frontend:**
+- ✅ REACT_APP_WEATHER_API_PROVIDER=openmeteo
 - ✅ REACT_APP_SUPABASE_URL
 - ✅ REACT_APP_SUPABASE_ANON_KEY
 - ✅ REACT_APP_NODE_API_BASE (production backend URL)
-- ✅ REACT_APP_WEATHER_API_KEY (optional, only if frontend calls API directly)
 
 ## Security Notes 🔒
 
@@ -320,8 +341,8 @@ Frontend will run on http://localhost:3000
 ### Common Issues
 
 1. **"City not found" error**
-   - Ensure OpenWeatherMap API key is valid
-   - Check if you have One Call API 3.0 enabled
+   - Ensure Open-Meteo API is accessible (check network connection)
+   - Try searching with a different city name format
 
 2. **Favorites not syncing**
    - Verify Supabase credentials are correct
@@ -351,7 +372,8 @@ MIT License - feel free to use this project for learning or production!
 
 ## Credits 🙏
 
-- Weather data: [OpenWeatherMap](https://openweathermap.org/)
+- Weather data: [Open-Meteo](https://open-meteo.com/) - Free weather API
+- Geocoding: [Open-Meteo Geocoding API](https://open-meteo.com/en/docs/geocoding-api)
 - Authentication & Database: [Supabase](https://supabase.com/)
 - Icons: Emoji (native)
 - Charts: [Recharts](https://recharts.org/)
