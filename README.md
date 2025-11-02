@@ -116,9 +116,7 @@ weather-project/
 
 ### 1. Clone the Repository
 
-```bash
-cd "C:\Users\Hp\Desktop\weather project"
-```
+git clone https://github.com/VighneshMBhat/Weather-Analytics.git
 
 ### 2. Backend Setup
 
