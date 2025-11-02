@@ -13,18 +13,24 @@ const {
 async function authenticateUser(req, res, next) {
   const authHeader = req.headers.authorization;
 
+  console.log('🔐 Auth header:', authHeader ? 'Present' : 'Missing');
+
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    console.log('❌ No Bearer token in Authorization header');
     return res.status(401).json({ error: 'Unauthorized: No token provided' });
   }
 
   const token = authHeader.substring(7);
+  console.log('🔑 Token extracted, length:', token.length);
 
   const { user, error } = await verifyToken(token);
 
   if (error || !user) {
-    return res.status(401).json({ error: 'Unauthorized: Invalid token' });
+    console.log('❌ Token verification failed:', error);
+    return res.status(401).json({ error: 'Unauthorized: Invalid token', details: error });
   }
 
+  console.log('✅ User authenticated:', user.email);
   req.user = user;
   next();
 }

@@ -50,8 +50,8 @@ const TempChart = ({ data, title = 'Temperature Forecast', showBrush = false }) 
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6">
-      <h3 className="text-xl font-bold mb-4 text-gray-800">{title}</h3>
+    <div className="bg-white/80 dark:bg-black/40 backdrop-blur-md rounded-3xl shadow-soft p-6 border border-white/20">
+      <h3 className="text-xl font-bold mb-4 bg-gradient-1 bg-clip-text text-transparent">{title}</h3>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />

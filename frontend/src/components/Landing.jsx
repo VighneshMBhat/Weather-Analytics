@@ -16,7 +16,10 @@ function Landing() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center px-4">
+    <div className="min-h-screen relative flex items-center justify-center px-4 overflow-hidden">
+      {/* Animated Aurora Gradient Background */}
+      <div className="absolute inset-0 bg-gradient-aurora animate-aurora" />
+      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/5 to-transparent" />
       <div className="max-w-4xl w-full">
         {/* Main Content */}
         <motion.div
@@ -35,12 +38,18 @@ function Landing() {
             🌤️
           </motion.div>
 
-          {/* Title */}
+          {/* Title with Gradient */}
           <motion.h1
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
-            className="text-5xl md:text-7xl font-bold text-white mb-4"
+            className="text-5xl md:text-7xl font-bold mb-4"
+            style={{
+              background: 'linear-gradient(90deg, #6C63FF, #00D4FF)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}
           >
             Weather Analytics
           </motion.h1>
@@ -108,7 +117,7 @@ function Landing() {
           >
             <button
               onClick={handleSignIn}
-              className="group relative inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-purple-600 bg-white rounded-full shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300"
+              className="group relative inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-purple-600 bg-white rounded-full shadow-2xl hover:shadow-glow transform hover:scale-105 transition-all duration-300"
             >
               <svg
                 className="w-6 h-6 mr-3"
@@ -134,7 +143,11 @@ function Landing() {
               </svg>
               Sign in with Google
               <motion.span
-                className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-400 to-pink-400 opacity-0 group-hover:opacity-20 transition-opacity"
+                className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                style={{
+                  background: 'linear-gradient(90deg, rgba(108,99,255,0.3), rgba(0,212,255,0.3))',
+                  filter: 'blur(8px)',
+                }}
                 initial={false}
               />
             </button>
@@ -151,63 +164,67 @@ function Landing() {
           </motion.p>
         </motion.div>
 
-        {/* Background Decorations */}
+        {/* Floating Weather Icons */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <motion.div
             animate={{
-              y: [0, -20, 0],
-              rotate: [0, 5, 0],
-            }}
-            transition={{
-              duration: 6,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
-            className="absolute top-20 left-10 text-6xl opacity-20"
-          >
-            ☀️
-          </motion.div>
-          <motion.div
-            animate={{
-              y: [0, 20, 0],
-              rotate: [0, -5, 0],
+              y: [0, -30, 0],
+              x: [0, 20, 0],
             }}
             transition={{
               duration: 8,
               repeat: Infinity,
               ease: 'easeInOut',
             }}
-            className="absolute top-40 right-20 text-5xl opacity-20"
+            className="absolute top-20 left-10 text-7xl opacity-40"
+            style={{ filter: 'drop-shadow(0 0 20px rgba(255, 200, 0, 0.5))' }}
+          >
+            ☀️
+          </motion.div>
+          <motion.div
+            animate={{
+              y: [0, 25, 0],
+              x: [0, -15, 0],
+            }}
+            transition={{
+              duration: 10,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+            className="absolute top-40 right-20 text-6xl opacity-50"
+            style={{ filter: 'drop-shadow(0 0 15px rgba(255, 255, 255, 0.6))' }}
           >
             ☁️
           </motion.div>
           <motion.div
             animate={{
-              y: [0, -15, 0],
-              x: [0, 10, 0],
-            }}
-            transition={{
-              duration: 7,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
-            className="absolute bottom-32 left-1/4 text-4xl opacity-20"
-          >
-            🌧️
-          </motion.div>
-          <motion.div
-            animate={{
-              y: [0, 15, 0],
-              rotate: [0, 10, 0],
+              y: [0, -20, 0],
+              x: [0, 15, 0],
             }}
             transition={{
               duration: 9,
               repeat: Infinity,
               ease: 'easeInOut',
             }}
-            className="absolute bottom-20 right-1/3 text-5xl opacity-20"
+            className="absolute bottom-32 left-1/4 text-5xl opacity-40"
+            style={{ filter: 'drop-shadow(0 0 15px rgba(0, 212, 255, 0.4))' }}
           >
-            ⛈️
+            ☁️
+          </motion.div>
+          <motion.div
+            animate={{
+              y: [0, 20, 0],
+              rotate: [0, 8, 0],
+            }}
+            transition={{
+              duration: 7,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+            className="absolute bottom-20 right-1/4 text-6xl opacity-45"
+            style={{ filter: 'drop-shadow(0 0 20px rgba(255, 200, 0, 0.5))' }}
+          >
+            ☀️
           </motion.div>
         </div>
       </div>
@@ -215,18 +232,33 @@ function Landing() {
   );
 }
 
-// Feature Card Component
+// Feature Card Component with Enhanced Glassmorphism
 function FeatureCard({ icon, title, description, delay }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay }}
-      className="bg-white/10 backdrop-blur-md rounded-2xl p-6 text-white hover:bg-white/20 transition-all duration-300 border border-white/20"
+      whileHover={{ scale: 1.05 }}
+      className="relative group rounded-2xl p-6 text-white transition-all duration-300 overflow-hidden"
+      style={{
+        background: 'rgba(255, 255, 255, 0.15)',
+        backdropFilter: 'blur(18px)',
+        border: '1px solid rgba(255, 255, 255, 0.3)',
+      }}
     >
-      <div className="text-4xl mb-3">{icon}</div>
-      <h3 className="text-lg font-semibold mb-2">{title}</h3>
-      <p className="text-sm text-white/80">{description}</p>
+      {/* Glowing hover effect */}
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+        style={{
+          background: 'radial-gradient(circle at center, rgba(108,99,255,0.2), rgba(0,212,255,0.2))',
+          filter: 'blur(20px)',
+        }}
+      />
+      <div className="relative z-10">
+        <div className="text-4xl mb-3">{icon}</div>
+        <h3 className="text-lg font-semibold mb-2">{title}</h3>
+        <p className="text-sm text-white/90">{description}</p>
+      </div>
     </motion.div>
   );
 }

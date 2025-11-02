@@ -92,6 +92,10 @@ const weatherSlice = createSlice({
           ...state.byCity[cityKey],
           // Backend returns {cityName, current: {...}}, extract the nested current object
           current: action.payload.data.current || action.payload.data,
+          // Store lat/lon for favorites functionality
+          lat: action.payload.data.lat || action.payload.data.latitude,
+          lon: action.payload.data.lon || action.payload.data.longitude,
+          cityName: action.payload.data.cityName,
           lastFetched: Date.now(),
           status: 'succeeded',
           error: null,
@@ -145,6 +149,10 @@ const weatherSlice = createSlice({
           current: action.payload.current.current || action.payload.current,
           // Backend returns {forecast: {daily, hourly}}, extract the nested forecast object
           forecast: action.payload.forecast.forecast || action.payload.forecast,
+          // Store lat/lon for favorites functionality
+          lat: action.payload.current.lat || action.payload.current.latitude,
+          lon: action.payload.current.lon || action.payload.current.longitude,
+          cityName: action.payload.current.cityName,
           lastFetched: Date.now(),
           status: 'succeeded',
           error: null,

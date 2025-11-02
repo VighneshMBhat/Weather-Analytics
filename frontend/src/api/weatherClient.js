@@ -145,6 +145,9 @@ export const getFavorites = async (token) => {
  * Add favorite city
  */
 export const addFavorite = async (token, cityName, lat, lon) => {
+  console.log('📤 Adding favorite:', { cityName, lat, lon });
+  console.log('🔑 Token:', token ? `${token.substring(0, 20)}...` : 'NO TOKEN');
+  
   const response = await weatherAPI.post(
     '/favorites',
     { cityName, lat, lon },
@@ -154,6 +157,8 @@ export const addFavorite = async (token, cityName, lat, lon) => {
       },
     }
   );
+  
+  console.log('✅ Favorite added successfully:', response.data);
   return response.data;
 };
 

@@ -11,7 +11,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { selectUnit } from '../../features/settings/settingsSlice';
-import { formatDateTime, formatWindSpeed } from '../../utils/converters';
+import { formatDateTime } from '../../utils/converters';
 
 const WindChart = ({ data, title = 'Wind Speed' }) => {
   const unit = useSelector(selectUnit);
@@ -57,8 +57,8 @@ const WindChart = ({ data, title = 'Wind Speed' }) => {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6">
-      <h3 className="text-xl font-bold mb-4 text-gray-800">{title}</h3>
+    <div className="bg-white/80 dark:bg-black/40 backdrop-blur-md rounded-3xl shadow-soft p-6 border border-white/20">
+      <h3 className="text-xl font-bold mb-4 bg-gradient-3 bg-clip-text text-transparent">{title}</h3>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />

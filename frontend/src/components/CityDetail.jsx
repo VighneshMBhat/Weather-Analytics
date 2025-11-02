@@ -5,9 +5,10 @@ import { motion } from 'framer-motion';
 import { fetchAllWeatherData, selectWeatherByCity } from '../features/weather/weatherSlice';
 import { selectUnit } from '../features/settings/settingsSlice';
 import { formatTemperature, formatWindSpeed, formatTime } from '../utils/converters';
-import { getWeatherIcon, getWeatherGradient } from '../utils/weatherIcons';
+import { getWeatherGradient } from '../utils/weatherIcons';
 import { usePolling } from '../hooks/usePolling';
 import FavoriteButton from './FavoriteButton';
+import AnimatedWeatherIcon from './AnimatedWeatherIcon';
 import TempChart from './Charts/TempChart';
 import PrecipChart from './Charts/PrecipChart';
 import WindChart from './Charts/WindChart';
@@ -102,14 +103,25 @@ const CityDetail = () => {
   const gradient = getWeatherGradient(weatherIcon, weatherDesc);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen relative overflow-hidden py-8 px-4">
+      {/* Animated gradient background */}
+      <div 
+        className="absolute inset-0 transition-all duration-1000 ease-in-out"
+        style={{
+          background: 'linear-gradient(145deg, rgba(108,99,255,0.85), rgba(0,212,255,0.75))',
+          backdropFilter: 'blur(18px)',
+        }}
+      />
+      <div className="absolute inset-0 bg-bg-light dark:bg-bg-dark opacity-40" />
+      
+      <div className="relative z-10 max-w-7xl mx-auto">
         {/* Back Button */}
         <motion.button
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
+          whileHover={{ scale: 1.05, x: -5 }}
           onClick={handleBack}
-          className="mb-6 flex items-center space-x-2 text-gray-600 hover:text-gray-800 transition-colors"
+          className="mb-6 flex items-center space-x-2 bg-white/80 dark:bg-black/40 backdrop-blur-md px-4 py-2 rounded-xl text-gray-800 dark:text-white hover:bg-white dark:hover:bg-black/60 transition-all shadow-lg"
         >
           <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -121,16 +133,23 @@ const CityDetail = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className={`bg-gradient-to-br ${gradient} rounded-3xl shadow-2xl p-8 text-white mb-8 relative overflow-hidden`}
+          className="relative rounded-3xl shadow-2xl p-8 text-white mb-8 overflow-hidden backdrop-blur-md"
+          style={{
+            background: 'linear-gradient(145deg, rgba(108,99,255,0.9), rgba(0,212,255,0.85))',
+            backdropFilter: 'blur(18px)',
+          }}
         >
+          {/* Gradient overlay */}
+          <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-30 transition-opacity duration-1000`} />
+          
           <div className="relative z-10">
             <div className="flex justify-between items-start mb-6">
-              <div>
-                <h1 className="text-4xl font-bold mb-2">{decodedCityName}</h1>
+              <div className="flex-1">
+                <h1 className="text-4xl font-bold mb-2 drop-shadow-lg">{decodedCityName}</h1>
                 <p className="text-xl opacity-90 capitalize">{weatherDesc}</p>
               </div>
-              <div className="text-8xl" role="img" aria-label={weatherDesc}>
-                {getWeatherIcon(weatherIcon, weatherDesc)}
+              <div className="relative">
+                <AnimatedWeatherIcon condition={weatherDesc} className="w-24 h-24 drop-shadow-2xl" />
               </div>
             </div>
 
@@ -180,12 +199,34 @@ const CityDetail = () => {
 
             {/* Action Buttons */}
             <div className="flex flex-wrap gap-4">
-              <FavoriteButton
-                cityName={decodedCityName}
-                lat={weatherData.lat}
-                lon={weatherData.lon}
-                className="bg-white bg-opacity-20 backdrop-blur-sm px-4 py-2 rounded-lg hover:bg-opacity-30 transition-all"
-              />
+              <div className="relative">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    // Trigger the FavoriteButton click
+                    const favBtn = document.querySelector(`#fav-btn-${decodedCityName.replace(/[^a-zA-Z0-9]/g, '-')}`);
+                    if (favBtn) favBtn.click();
+                  }}
+                  className="inline-flex items-center gap-3 bg-gradient-to-r from-pink-500/40 to-red-500/40 backdrop-blur-md px-8 py-4 rounded-2xl hover:from-pink-500/60 hover:to-red-500/60 transition-all shadow-lg border-2 border-white/50 hover:border-white/70"
+                >
+                  <div 
+                    id={`fav-btn-${decodedCityName.replace(/[^a-zA-Z0-9]/g, '-')}`} 
+                    className="inline-block scale-125"
+                  >
+                    <FavoriteButton
+                      cityName={decodedCityName}
+                      lat={weatherData.lat}
+                      lon={weatherData.lon}
+                      className=""
+                    />
+                  </div>
+                  <span className="font-bold text-lg text-white drop-shadow-lg">
+                     Add to Favorites
+                  </span>
+                </motion.button>
+              </div>
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}

@@ -142,17 +142,53 @@ async function removeFavorite(userId, cityName) {
 
 /**
  * Verify Supabase JWT token (for protected endpoints)
+ * Properly verifies Google OAuth JWT tokens from Supabase
  */
 async function verifyToken(token) {
   if (!supabase) {
+    console.error('❌ Supabase not configured');
     return { user: null, error: 'Supabase not configured' };
   }
 
+  if (!token) {
+    console.error('❌ No token provided');
+    return { user: null, error: 'No token provided' };
+  }
+
   try {
-    const { data, error } = await supabase.auth.getUser(token);
-    return { user: data?.user, error };
+    console.log('🔍 Verifying token (length:', token.length, ')');
+    
+    // Create a Supabase client with the user's JWT token
+    // This creates a client instance scoped to this specific user
+    const { createClient } = require('@supabase/supabase-js');
+    const userClient = createClient(
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+    );
+    
+    // Verify the JWT token by calling getUser with the token
+    // This decodes and validates the JWT
+    const { data, error } = await userClient.auth.getUser(token);
+    
+    if (error) {
+      console.error('❌ Token verification failed:', error.message);
+      return { user: null, error: error.message };
+    }
+    
+    if (!data || !data.user) {
+      console.error('❌ No user data in token response');
+      return { user: null, error: 'Invalid token: no user found' };
+    }
+
+    console.log('✅ Token verified successfully!');
+    console.log('   User:', data.user.email);
+    console.log('   User ID:', data.user.id);
+    
+    return { user: data.user, error: null };
   } catch (error) {
-    console.error('Error verifying token:', error.message);
+    console.error('❌ Exception during token verification:');
+    console.error('   Message:', error.message);
+    console.error('   Stack:', error.stack);
     return { user: null, error: error.message };
   }
 }

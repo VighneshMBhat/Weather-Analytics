@@ -53,8 +53,19 @@ const Dashboard = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen relative overflow-hidden py-8 px-4">
+      {/* Animated gradient background */}
+      <div 
+        className="absolute inset-0 bg-gradient-animated opacity-30 dark:opacity-20"
+        style={{
+          backgroundSize: '400% 400%',
+          animation: 'gradientShift 15s ease infinite',
+        }}
+      />
+      <div className="absolute inset-0 bg-bg-light dark:bg-bg-dark" />
+      
+      {/* Content */}
+      <div className="relative z-10 max-w-7xl mx-auto">
         {/* Search Bar */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -71,12 +82,17 @@ const Dashboard = () => {
           transition={{ delay: 0.2 }}
           className="text-center mb-8"
         >
-          <h2 className="text-3xl font-bold text-gray-800 mb-2">
+          <h2 className="text-4xl font-bold bg-gradient-1 bg-clip-text text-transparent mb-3">
             {favorites.length > 0 ? 'Your Favorite Cities' : 'Popular Cities'}
           </h2>
-          <p className="text-gray-600">
+          <motion.p 
+            className="text-gray-600 dark:text-gray-400 flex items-center justify-center gap-2"
+            animate={{ opacity: [0.7, 1, 0.7] }}
+            transition={{ duration: 2, repeat: Infinity }}
+          >
+            <span className="inline-block w-2 h-2 bg-success rounded-full animate-pulse" />
             Real-time updates every {refreshSeconds} seconds
-          </p>
+          </motion.p>
         </motion.div>
 
         {/* City Cards Grid */}
